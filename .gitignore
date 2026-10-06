@@ -1,6 +1,8 @@
+# 실제 보도자료·개인 양식 파일은 올리지 않는다
 *.hwp
 *.hwpx
-!examples/*.hwpx
+# 담당자 정보를 비워 둔 봉화군 기본 양식만 예외로 올린다
+!skill/bonghwa-press-release/templates/press_release_template.hwpx
 target/
 cp.txt
 __pycache__/

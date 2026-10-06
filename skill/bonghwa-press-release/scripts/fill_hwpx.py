@@ -2,19 +2,28 @@
 """봉화군 보도자료 양식(hwpx)에 배포일자·제목·부제·본문을 채워 넣는 스크립트.
 
 사용법
-  # 1) 양식 구조 확인
-  python fill_hwpx.py --template 양식.hwpx --dump
+  # 1) 내장 기본 양식으로 바로 만들기 (--template 생략)
+  python fill_hwpx.py --content 내용.json --out 보도자료_주제.hwpx
 
-  # 2) 내용 채우기
+  # 2) 직접 받은 양식에 채우기
   python fill_hwpx.py --template 양식.hwpx --content 내용.json --out 보도자료_주제.hwpx
 
-내용.json 형식
+  # 3) 양식 구조 확인
+  python fill_hwpx.py --template 양식.hwpx --dump
+
+내용.json 형식 (contacts는 생략 가능, 생략하면 양식의 담당자 표를 그대로 둔다)
   {
     "date": "10. 7.(수)",
     "title": "봉화군, ...",
-    "subtitle": "-... -",
+    "subtitle": "..., ...",
+    "contacts": [
+      {"직위": "도시계획과장", "성명": "○○○", "전화": "054)679-○○○○"},
+      {"직위": "도시재생팀장", "성명": "○○○", "전화": "054)679-○○○○"},
+      {"직위": "실무자",       "성명": "○○○", "전화": "054)679-○○○○"}
+    ],
     "body": ["리드 문단", "둘째 문단", "...", "관계자 코멘트"]
   }
+  contacts는 양식 담당자 표의 담당부서·작성자·실무자 줄 순서다(셋째 줄 직위는 보통 "실무자").
 
 필요 패키지: lxml (pip install lxml)
 
@@ -29,15 +38,19 @@ import re
 import shutil
 import sys
 import tempfile
+import struct
 import zipfile
+import zlib
 
 try:
     from lxml import etree
 except ImportError:
     sys.exit("lxml이 필요합니다: pip install lxml")
 
-DATE_RE = re.compile(r"^\s*\d{1,2}\.\s*\d{1,2}\.\s*\(.\)\s*$")
+DATE_RE = re.compile(r"^\s*[\d○]{1,2}\.\s*[\d○]{1,2}\.\s*\(.\)\s*$")
 SECTION = "Contents/section0.xml"
+HERE = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_TEMPLATE = os.path.join(HERE, "..", "templates", "press_release_template.hwpx")
 
 
 def L(e):
@@ -127,8 +140,32 @@ def analyse(root):
     return header, date_p, title_p, sub_p, body
 
 
+def contact_cells(header):
+    """담당자 표의 (직위·성명 칸, 전화 칸) 문단을 담당부서·작성자·실무자 순서로 돌려준다."""
+    tbl = next(x for x in header.iter() if L(x) == "tbl")
+    cells = {}
+    for tc in tbl.iter():
+        if L(tc) != "tc":
+            continue
+        addr = next((c for c in tc if L(c) == "cellAddr"), None)
+        if addr is None:
+            continue
+        ps = [p for p in tc.iter() if L(p) == "p"]
+        if ps:
+            cells.setdefault((int(addr.get("colAddr")), int(addr.get("rowAddr"))), ps[0])
+    rows = []
+    for row in range(3):
+        name_p, tel_p = cells.get((3, row)), cells.get((4, row))
+        if name_p is None or tel_p is None:
+            break
+        rows.append((name_p, tel_p))
+    return rows
+
+
 def dump(root):
     header, date_p, title_p, sub_p, body = analyse(root)
+    for i, (n, t) in enumerate(contact_cells(header)):
+        print(f"[담당자{i + 1}]  {text_of(n)!r} {text_of(t)!r}")
     print("[배포일자]", repr(text_of(date_p)) if date_p is not None else "찾지 못함")
     print("[제목]   ", repr(text_of(title_p)) if title_p is not None else "찾지 못함")
     print("[부제]   ", repr(text_of(sub_p)) if sub_p is not None else "찾지 못함")
@@ -152,6 +189,21 @@ def fill(root, content):
         if sub_p is None:
             raise SystemExit("부제 문단을 찾지 못했습니다. --dump로 양식 구조를 확인하세요.")
         set_text(sub_p, content["subtitle"])
+
+    contacts = content.get("contacts") or []
+    if contacts:
+        rows = contact_cells(header)
+        if len(rows) < len(contacts):
+            raise SystemExit(f"양식의 담당자 표는 {len(rows)}줄인데 contacts가 {len(contacts)}개입니다.")
+        for (name_p, tel_p), c in zip(rows, contacts):
+            title = (c.get("직위") or "").strip()
+            name = (c.get("성명") or "").strip()
+            # 원본 양식처럼 직위 길이와 상관없이 성명이 같은 위치에서 시작하도록 공백을 맞춘다
+            # (한글 1자 = 공백 2칸, "도시계획과장" + 공백 5칸 = 17칸 기준)
+            width = sum(2 if ord(ch) > 0x10FF else 1 for ch in title)
+            set_text(name_p, (title + " " * max(1, 17 - width) + name) if name else title)
+            if c.get("전화"):
+                set_text(tel_p, c["전화"].strip())
 
     texts = content.get("body") or []
     if not texts:
@@ -186,7 +238,31 @@ def fill(root, content):
         root.insert(pos + i, p)
 
 
+def blank_png(w=724, h=1024):
+    """미리보기 이미지를 덮어쓸 흰 PNG(외부 라이브러리 없이 생성)."""
+    def chunk(tag, data):
+        c = struct.pack(">I", len(data)) + tag + data
+        return c + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
+    raw = b"".join(b"\x00" + b"\xff" * (w * 3) for _ in range(h))
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
+            + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b""))
+
+
+def refresh_preview(work, root):
+    """한글이 저장해 둔 미리보기(썸네일·텍스트)에는 양식의 이전 내용이 남아 있으므로 새 내용으로 바꾼다."""
+    txt_path = os.path.join(work, "Preview", "PrvText.txt")
+    if os.path.exists(txt_path):
+        lines = [text_of(p) for p in root.iter() if L(p) == "p" and not any(L(x) == "p" for x in p.iterdescendants())]
+        with open(txt_path, "w", encoding="utf-8", newline="") as f:
+            f.write("\r\n".join(l for l in lines if l.strip()))
+    img_path = os.path.join(work, "Preview", "PrvImage.png")
+    if os.path.exists(img_path):
+        with open(img_path, "wb") as f:
+            f.write(blank_png())
+
+
 def save(work, tree, out):
+    refresh_preview(work, tree.getroot())
     tree.write(
         os.path.join(work, SECTION),
         xml_declaration=True,
@@ -211,13 +287,16 @@ def save(work, tree, out):
 
 def main():
     ap = argparse.ArgumentParser(description="봉화군 보도자료 hwpx 양식 채우기")
-    ap.add_argument("--template", required=True, help="양식 파일(.hwpx)")
+    ap.add_argument("--template", help="양식 파일(.hwpx). 생략하면 내장 기본 양식을 쓴다")
     ap.add_argument("--content", help="내용 JSON 파일")
     ap.add_argument("--out", help="결과 파일(.hwpx)")
     ap.add_argument("--dump", action="store_true", help="양식 구조만 출력")
     a = ap.parse_args()
 
-    work, tree = load(a.template)
+    template = a.template or DEFAULT_TEMPLATE
+    if not os.path.exists(template):
+        sys.exit(f"양식 파일이 없습니다: {template}\n--template으로 양식 경로를 지정하세요.")
+    work, tree = load(template)
     try:
         root = tree.getroot()
         if a.dump or not a.content:

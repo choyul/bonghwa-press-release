@@ -1,18 +1,18 @@
 # 봉화군 보도자료 작성 도우미
 
-이 도우미는 발표 자료·기획안·회의 메모를 주면 **봉화군 보도자료 문체로 초안을 쓰고**, 공보팀 제출 양식(hwpx)이 있으면 **배포일자·제목·부제·본문을 양식에 채워 줍니다.**
+이 도우미는 발표 자료·기획안·회의 메모를 주면 **봉화군 보도자료 문체로 초안을 쓰고**, 안에 들어 있는 **봉화군 보도자료 양식(hwpx)에 담당자·배포일자·제목·부제·본문을 채워 파일로 내려 줍니다.** 양식 파일을 따로 준비하지 않아도 됩니다.
 
 **설치 안내 페이지: https://choyul.github.io/bonghwa-press-release/** (동료에게는 이 주소만 전달하면 됩니다)
 
 Claude, ChatGPT, Gemini 어디서든 쓸 수 있습니다. 쓰는 AI에 맞는 설치 방법을 아래에서 고르세요.
 
-| 쓰는 AI | 설치할 것 | 양식 파일 자동 채우기 |
+| 쓰는 AI | 설치할 것 | hwpx 파일까지 |
 |---|---|---|
 | Claude (웹·데스크톱) | `dist/bonghwa-press-release-skill.zip` 업로드 | 됨 |
 | Claude (주소로 설치) | 저장소 주소를 주고 설치 요청 | 대개 됨 (GitHub 접근 허용 시) |
 | Claude Code | `skill/bonghwa-press-release` 폴더 복사 | 됨 |
 | ChatGPT | GPT 만들기에 지침 붙여 넣기 + 지식 파일 업로드 | 됨 (코드 실행 켜기) |
-| Gemini | Gem 만들기에 지침 붙여 넣기 | 초안까지만. 양식은 PC에서 스크립트로 채움 |
+| Gemini | Gem 만들기에 지침 붙여 넣기 | 초안·JSON까지. 파일은 PC에서 한 줄 명령 |
 
 ---
 
@@ -34,7 +34,7 @@ Claude, ChatGPT, Gemini 어디서든 쓸 수 있습니다. 쓰는 AI에 맞는 �
 3. **+ → Create skill → Upload a skill**을 누르고 zip을 올립니다.
 4. 목록에 생긴 `bonghwa-press-release`를 켭니다.
 
-설정에서 **코드 실행 및 파일 생성(Code execution and file creation)**이 켜져 있어야 합니다. 이후에는 "이 자료로 보도자료 써 줘"라고 하면서 자료와 양식을 첨부하면 됩니다.
+설정에서 **코드 실행 및 파일 생성(Code execution and file creation)**이 켜져 있어야 합니다. 이후에는 "이 자료로 보도자료 써 줘"라고 하면서 자료만 첨부하면, 봉화군 양식 hwpx 파일까지 만들어 줍니다. 담당자(직위·성명·전화)를 같이 알려 주면 담당자 표도 채웁니다.
 
 > 메뉴 이름은 Claude 업데이트에 따라 바뀔 수 있습니다. 최신 안내: [Use skills in Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
 
@@ -47,7 +47,7 @@ https://github.com/choyul/bonghwa-press-release 저장소의
 skill/bonghwa-press-release/SKILL.md 를 읽고 내 스킬로 설치해 줘.
 ```
 
-Claude가 저장소를 읽고 **스킬 저장 카드**를 띄우면, 카드에서 저장을 누르면 설치가 끝납니다. 이 방법으로는 SKILL.md 본문만 저장됩니다. 대신 양식을 채울 차례가 되면 스킬이 GitHub에서 `fill_hwpx.py`를 내려받아 씁니다.
+Claude가 저장소를 읽고 **스킬 저장 카드**를 띄우면, 카드에서 저장을 누르면 설치가 끝납니다. 이 방법으로는 SKILL.md 본문만 저장됩니다. 대신 파일을 만들 차례가 되면 스킬이 GitHub에서 양식 채우기 스크립트와 기본 양식을 내려받아 씁니다.
 
 다음 두 경우에는 위 "1. Claude (웹·데스크톱 앱)"의 zip 업로드 방법을 쓰세요.
 - Claude가 저장소를 열지 못하는 경우(조직 설정으로 GitHub 접근이 막힌 경우 등)
@@ -65,13 +65,14 @@ cp -r bonghwa-press-release/skill/bonghwa-press-release ~/.claude/skills/
 1. ChatGPT 왼쪽 메뉴에서 **GPT 탐색 → 만들기 → 구성** 탭으로 갑니다.
 2. **이름**에 `봉화군 보도자료 도우미`를 적습니다.
 3. **지침** 칸에 [`prompts/instructions.md`](prompts/instructions.md)의 내용을 전부 복사해 붙여 넣습니다.
-4. **지식**에 다음 두 파일을 올립니다.
+4. **지식**에 다음 세 파일을 올립니다. [설치 안내 페이지](https://choyul.github.io/bonghwa-press-release/#gpt)의 버튼으로 내려받으면 편합니다.
+   - [`skill/bonghwa-press-release/templates/press_release_template.hwpx`](skill/bonghwa-press-release/templates/press_release_template.hwpx) (봉화군 기본 양식)
    - [`skill/bonghwa-press-release/scripts/fill_hwpx.py`](skill/bonghwa-press-release/scripts/fill_hwpx.py)
    - [`skill/bonghwa-press-release/SKILL.md`](skill/bonghwa-press-release/SKILL.md)
 5. **기능**에서 **코드 인터프리터 및 데이터 분석**을 켭니다.
 6. 저장할 때 공유 범위를 "나만 보기" 또는 "링크가 있는 사람"으로 정합니다. 링크로 공유하면 동료도 그대로 쓸 수 있습니다.
 
-GPT를 만들 수 없는 요금제라면 **프로젝트**를 만들고, 프로젝트 지침에 같은 내용을 붙여 넣은 뒤 두 파일을 프로젝트 파일로 올려도 됩니다.
+GPT를 만들 수 없는 요금제라면 **프로젝트**를 만들고, 프로젝트 지침에 같은 내용을 붙여 넣은 뒤 세 파일을 프로젝트 파일로 올려도 됩니다.
 
 ## 4. Gemini (Gem 만들기)
 
@@ -80,27 +81,45 @@ GPT를 만들 수 없는 요금제라면 **프로젝트**를 만들고, 프로�
 3. **안내** 칸에 [`prompts/instructions.md`](prompts/instructions.md)의 내용을 전부 붙여 넣습니다.
 4. **지식**에 [`SKILL.md`](skill/bonghwa-press-release/SKILL.md)를 올리고 저장합니다.
 
-Gemini는 초안과 함께 **양식 채우기용 JSON**을 만들어 줍니다. 양식 파일은 아래 "5. PC에서 양식 채우기"로 채웁니다.
+Gemini는 초안과 함께 **양식 채우기용 JSON**을 만들어 줍니다. hwpx 파일은 아래 "5. PC에서 파일 만들기"로 만듭니다.
 
 > ChatGPT·Gemini의 메뉴 이름과 요금제별 제공 여부는 서비스 업데이트에 따라 달라질 수 있습니다.
 
-## 5. PC에서 양식 채우기 (AI 종류와 무관)
+## 5. PC에서 파일 만들기 (AI 종류와 무관)
 
-AI가 만들어 준 JSON을 `내용.json`으로 저장한 뒤 실행합니다. 파이썬 3가 설치되어 있어야 합니다.
+1. [`dist/bonghwa-press-release-skill.zip`](dist/bonghwa-press-release-skill.zip)을 내려받아 압축을 풉니다. 스크립트와 봉화군 기본 양식이 함께 들어 있습니다.
+2. AI가 만들어 준 JSON을 `내용.json`으로 저장해 압축을 푼 `bonghwa-press-release` 폴더에 넣습니다.
+3. 그 폴더에서 실행합니다(파이썬 3 필요).
 
 ```bash
 pip install lxml
-python skill/bonghwa-press-release/scripts/fill_hwpx.py --template 양식.hwpx --dump
-python skill/bonghwa-press-release/scripts/fill_hwpx.py --template 양식.hwpx --content 내용.json --out 보도자료_주제.hwpx
+python scripts/fill_hwpx.py --content 내용.json --out 보도자료_주제.hwpx
 ```
 
-`--dump`는 양식에서 배포일자·제목·부제·본문을 제대로 찾았는지 보여 줍니다. 예시 JSON은 [`examples/content.example.json`](examples/content.example.json)에 있습니다.
+`--template 내양식.hwpx`를 붙이면 기본 양식 대신 그 양식에 채웁니다. 예시 JSON은 [`examples/content.example.json`](examples/content.example.json)에 있습니다.
 
 ---
 
-## 양식이 .hwp(구형 파일)일 때
+## 봉화군 기본 양식
 
-봉화군 보도자료 양식은 이전 보도자료 파일을 그대로 쓰는 경우가 많아 대개 구형 `.hwp`입니다. 스크립트는 `.hwpx`만 읽습니다. 다음 둘 중 하나로 바꿔서 쓰세요.
+[`templates/press_release_template.hwpx`](skill/bonghwa-press-release/templates/press_release_template.hwpx)는 봉화군 보도자료 양식에서 내용만 ○○○로 비운 파일입니다. 들어 있는 것은 다음과 같습니다.
+- 보도자료 표제, 봉화군 슬로건·로고 이미지, 공보 이메일
+- 담당자 표, "군정홍보에 많은 관심과 협조 감사드립니다."
+- 제목·부제 칸과 본문 서식(휴먼명조 15pt)
+
+담당자 표는 JSON의 `contacts`로 채웁니다(담당부서·작성자·실무자 순서). 비워 두면 ○○○가 그대로 남습니다.
+
+```json
+"contacts": [
+  {"직위": "도시계획과장", "성명": "○○○", "전화": "054)679-○○○○"},
+  {"직위": "도시재생팀장", "성명": "○○○", "전화": "054)679-○○○○"},
+  {"직위": "실무자", "성명": "○○○", "전화": "054)679-○○○○"}
+]
+```
+
+### 내 양식이 .hwp(구형 파일)일 때
+
+스크립트는 `.hwpx`만 읽습니다. 다른 양식을 쓰려면 먼저 바꿔 주세요. 바꾸기 어려우면 기본 양식을 그대로 쓰면 됩니다.
 
 - **한글이 있으면(권장):** 양식을 열고 **다른 이름으로 저장 → 파일 형식: HWPX**로 저장합니다.
 - **한글이 없으면:** Java 17 이상, Maven, git이 있는 환경에서 변환 도구를 씁니다. 처음 실행할 때 [neolord0/hwp2hwpx](https://github.com/neolord0/hwp2hwpx)(Apache-2.0)를 받아 빌드합니다.
@@ -109,13 +128,11 @@ python skill/bonghwa-press-release/scripts/fill_hwpx.py --template 양식.hwpx -
   skill/bonghwa-press-release/tools/hwp2hwpx/convert.sh 양식.hwp 양식.hwpx
   ```
 
-결과물은 `.hwpx`이며 한글에서 그대로 열립니다. `.hwp`가 필요하면 한글에서 다시 저장하면 됩니다.
-
 ## 알아 둘 점
 
+- 결과물은 `.hwpx`이며 한글에서 그대로 열립니다. `.hwp`가 필요하면 한글에서 다시 저장하면 됩니다.
 - 스크립트는 본문을 양식의 기본 본문 글자 모양으로 통일합니다. 그래서 줄이 넘어가는 위치가 원본과 다를 수 있으니, 한글에서 한 번 열어 확인하세요.
-- 담당자 표(부서·성명·전화번호)는 스크립트가 건드리지 않습니다. 양식에 들어 있는 그대로 남으니 필요하면 한글에서 고치세요.
-- 양식 파일과 실제 보도자료 파일은 저장소에 올리지 마세요(`.gitignore`에서 `*.hwp`, `*.hwpx`를 제외해 두었습니다).
+- 실제 보도자료 파일은 저장소에 올리지 마세요(`.gitignore`에서 기본 양식 외의 `*.hwp`, `*.hwpx`를 제외해 두었습니다).
 
 ## 저장소 구성
 
@@ -123,8 +140,10 @@ python skill/bonghwa-press-release/scripts/fill_hwpx.py --template 양식.hwpx -
 skill/bonghwa-press-release/
   SKILL.md                  작성 기준 전문 (Claude 스킬 본문)
   scripts/fill_hwpx.py      양식 채우기 스크립트
+  templates/press_release_template.hwpx   봉화군 보도자료 기본 양식
   tools/hwp2hwpx/           구형 .hwp → .hwpx 변환 도구
 prompts/instructions.md     ChatGPT·Gemini용 지침 (붙여 넣기용)
 examples/content.example.json
-dist/bonghwa-press-release-skill.zip   Claude 업로드용 묶음
+dist/bonghwa-press-release-skill.zip   Claude 업로드용 묶음 (스크립트·기본 양식 포함)
+docs/index.html             설치 안내 페이지
 ```
