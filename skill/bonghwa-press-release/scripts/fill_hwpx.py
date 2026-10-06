@@ -97,24 +97,33 @@ def load(template):
 def analyse(root):
     """양식에서 배포일자·제목·부제 문단과 본문 영역을 찾는다."""
     top = [c for c in root if L(c) == "p"]
-    header = top[0]
+    # 머리 표가 들어 있는 문단을 찾는다(양식 앞에 빈 문단이 있을 수 있다)
+    header = next((p for p in top if any(L(x) == "tbl" for x in p.iter())), top[0])
     date_p = title_p = sub_p = None
-    for p in header.iter():
-        if L(p) != "p":
-            continue
-        s = text_of(p).strip()
-        if date_p is None and DATE_RE.match(s):
+    inner = [p for p in header.iter() if L(p) == "p" and p is not header
+             and not any(L(x) == "tbl" for x in p.iter())]
+    for p in inner:
+        if date_p is None and DATE_RE.match(text_of(p).strip()):
             date_p = p
-        if sub_p is None and s.startswith("-") and s.endswith("-") and len(s) > 2:
-            sub_p = p
-    if sub_p is not None:
-        sibs = [c for c in sub_p.getparent() if L(c) == "p"]
-        i = sibs.index(sub_p)
-        for cand in reversed(sibs[:i]):
-            if text_of(cand).strip():
-                title_p = cand
+    # 1순위: "군정홍보에 많은 관심과 협조 감사드립니다." 다음의 비어 있지 않은 두 문단 = 제목, 부제
+    idx = next((i for i, p in enumerate(inner) if "군정홍보" in text_of(p)), None)
+    if idx is not None:
+        after = [p for p in inner[idx + 1:] if text_of(p).strip()]
+        if after:
+            title_p = after[0]
+        if len(after) > 1:
+            sub_p = after[1]
+    # 2순위: 앞뒤 하이픈이 붙은 부제("-…-")와 그 앞 문단
+    if title_p is None or sub_p is None:
+        for p in inner:
+            s = text_of(p).strip()
+            if s.startswith("-") and s.endswith("-") and len(s) > 2:
+                sub_p = p
+                sibs = [c for c in p.getparent() if L(c) == "p"]
+                prev = [c for c in sibs[:sibs.index(p)] if text_of(c).strip()]
+                title_p = prev[-1] if prev else None
                 break
-    body = top[1:]
+    body = top[top.index(header) + 1:]
     return header, date_p, title_p, sub_p, body
 
 
@@ -137,11 +146,11 @@ def fill(root, content):
         set_text(date_p, content["date"])
     if content.get("title"):
         if title_p is None:
-            raise SystemExit("제목 문단을 찾지 못했습니다. 부제가 '-…-' 형식인지 확인하세요.")
+            raise SystemExit("제목 문단을 찾지 못했습니다. --dump로 양식 구조를 확인하세요.")
         set_text(title_p, content["title"])
     if content.get("subtitle"):
         if sub_p is None:
-            raise SystemExit("부제 문단을 찾지 못했습니다(앞뒤 하이픈 '-…-' 형식).")
+            raise SystemExit("부제 문단을 찾지 못했습니다. --dump로 양식 구조를 확인하세요.")
         set_text(sub_p, content["subtitle"])
 
     texts = content.get("body") or []
