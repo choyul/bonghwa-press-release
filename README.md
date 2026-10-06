@@ -7,6 +7,7 @@ Claude, ChatGPT, Gemini 어디서든 쓸 수 있습니다. 쓰는 AI에 맞는 �
 | 쓰는 AI | 설치할 것 | 양식 파일 자동 채우기 |
 |---|---|---|
 | Claude (웹·데스크톱) | `dist/bonghwa-press-release-skill.zip` 업로드 | 됨 |
+| Claude (주소로 설치) | 저장소 주소를 주고 설치 요청 | 대개 됨 (GitHub 접근 허용 시) |
 | Claude Code | `skill/bonghwa-press-release` 폴더 복사 | 됨 |
 | ChatGPT | GPT 만들기에 지침 붙여 넣기 + 지식 파일 업로드 | 됨 (코드 실행 켜기) |
 | Gemini | Gem 만들기에 지침 붙여 넣기 | 초안까지만. 양식은 PC에서 스크립트로 채움 |
@@ -34,6 +35,21 @@ Claude, ChatGPT, Gemini 어디서든 쓸 수 있습니다. 쓰는 AI에 맞는 �
 설정에서 **코드 실행 및 파일 생성(Code execution and file creation)**이 켜져 있어야 합니다. 이후에는 "이 자료로 보도자료 써 줘"라고 하면서 자료와 양식을 첨부하면 됩니다.
 
 > 메뉴 이름은 Claude 업데이트에 따라 바뀔 수 있습니다. 최신 안내: [Use skills in Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
+
+### 1-1. 저장소 주소를 주고 설치하기
+
+zip을 내려받기 번거로우면 Claude 대화창에 아래 문장을 그대로 붙여 넣어도 됩니다.
+
+```
+https://github.com/choyul/bonghwa-press-release 저장소의
+skill/bonghwa-press-release/SKILL.md 를 읽고 내 스킬로 설치해 줘.
+```
+
+Claude가 저장소를 읽고 **스킬 저장 카드**를 띄우면, 카드에서 저장을 누르면 설치가 끝납니다. 이 방법으로는 SKILL.md 본문만 저장됩니다. 대신 양식을 채울 차례가 되면 스킬이 GitHub에서 `fill_hwpx.py`를 내려받아 씁니다.
+
+다음 두 경우에는 위 "1. Claude (웹·데스크톱 앱)"의 zip 업로드 방법을 쓰세요.
+- Claude가 저장소를 열지 못하는 경우(조직 설정으로 GitHub 접근이 막힌 경우 등)
+- 저장 카드가 뜨지 않는 경우
 
 ## 2. Claude Code
 

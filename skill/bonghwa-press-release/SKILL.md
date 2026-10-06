@@ -82,6 +82,29 @@ description: 봉화군 보도자료 초안을 작성·수정하거나, PPT·PDF�
 
 ## 양식 채우기
 
+### 0. 스크립트 확보
+
+양식을 채우기 전에 이 스킬 폴더에 `scripts/fill_hwpx.py`가 있는지 확인한다. 스킬을 저장소 주소로 설치해 SKILL.md만 저장된 경우에는 스크립트가 없다. 그럴 때는 작업 폴더에 공개 저장소의 스크립트를 내려받아 쓴다.
+
+```bash
+curl -fsSL -o fill_hwpx.py \
+  https://raw.githubusercontent.com/choyul/bonghwa-press-release/main/skill/bonghwa-press-release/scripts/fill_hwpx.py
+```
+
+curl이 막혀 있으면 git으로 받는다.
+
+```bash
+git clone --depth 1 https://github.com/choyul/bonghwa-press-release.git
+# 스크립트: bonghwa-press-release/skill/bonghwa-press-release/scripts/fill_hwpx.py
+# 변환 도구: bonghwa-press-release/skill/bonghwa-press-release/tools/hwp2hwpx/convert.sh
+```
+
+내려받기도 실패하면 네트워크 제한 때문일 가능성이 크다. 이때는 같은 방법을 다시 시도하지 않는다. 사용자에게 다음 두 가지 중 하나를 안내하고, 그동안 보도자료 초안과 양식 채우기용 JSON까지는 완성해 준다.
+- 저장소의 `dist/bonghwa-press-release-skill.zip`을 스킬로 다시 설치한다.
+- `fill_hwpx.py`를 대화에 직접 첨부한다.
+
+아래 명령의 `scripts/fill_hwpx.py`는 스크립트를 내려받은 실제 위치로 바꿔 쓴다.
+
 ### 1. 파일 형식 확인
 
 봉화군 보도자료 양식은 이전 보도자료 파일을 그대로 쓰는 경우가 많고, 대개 구형 .hwp(HWP 5.0 바이너리)다. 구형 .hwp는 직접 고치지 않고 .hwpx로 바꾼 뒤 채운다.
