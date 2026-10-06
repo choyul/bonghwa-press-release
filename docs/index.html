@@ -114,8 +114,8 @@ skill/bonghwa-press-release/SKILL.md 를 읽고 내 스킬로 설치해 줘.</pr
         <a class="btn ghost" href="https://github.com/choyul/bonghwa-press-release/blob/main/prompts/instructions.md" target="_blank" rel="noopener">지침 원문 보기</a></div></li>
       <li><b>지식</b>에 아래 두 파일을 내려받아 올립니다.
         <div class="row">
-          <a class="btn ghost" href="https://github.com/choyul/bonghwa-press-release/raw/main/skill/bonghwa-press-release/scripts/fill_hwpx.py" download>fill_hwpx.py</a>
-          <a class="btn ghost" href="https://github.com/choyul/bonghwa-press-release/raw/main/skill/bonghwa-press-release/SKILL.md" download>SKILL.md</a>
+          <a class="btn ghost" data-dl="fill_hwpx.py" href="https://raw.githubusercontent.com/choyul/bonghwa-press-release/main/skill/bonghwa-press-release/scripts/fill_hwpx.py">fill_hwpx.py 내려받기</a>
+          <a class="btn ghost" data-dl="SKILL.md" href="https://raw.githubusercontent.com/choyul/bonghwa-press-release/main/skill/bonghwa-press-release/SKILL.md">SKILL.md 내려받기</a>
         </div></li>
       <li><b>기능</b>에서 <b>코드 인터프리터 및 데이터 분석</b>을 켜고 저장합니다. 공유 범위를 "링크가 있는 사람"으로 하면 동료도 같은 GPT를 쓸 수 있습니다.</li>
     </ol>
@@ -130,7 +130,10 @@ skill/bonghwa-press-release/SKILL.md 를 읽고 내 스킬로 설치해 줘.</pr
       <li><b>이름</b>에 <code>봉화군 보도자료 도우미</code>를 적습니다.</li>
       <li><b>안내</b> 칸에 지침을 붙여 넣습니다.
         <div class="row"><button class="btn" id="copy-inst2">지침 복사</button></div></li>
-      <li><b>지식</b>에 <a href="https://github.com/choyul/bonghwa-press-release/raw/main/skill/bonghwa-press-release/SKILL.md" download>SKILL.md</a>를 올리고 저장합니다.</li>
+      <li><b>지식</b>에 아래 파일을 내려받아 올리고 저장합니다.
+        <div class="row"><a class="btn ghost" data-dl="SKILL.md" href="https://raw.githubusercontent.com/choyul/bonghwa-press-release/main/skill/bonghwa-press-release/SKILL.md">SKILL.md 내려받기</a>
+        <a class="btn ghost" data-dl="fill_hwpx.py" href="https://raw.githubusercontent.com/choyul/bonghwa-press-release/main/skill/bonghwa-press-release/scripts/fill_hwpx.py">fill_hwpx.py 내려받기</a></div>
+        <span class="note">fill_hwpx.py는 PC에서 양식을 채울 때 씁니다.</span></li>
     </ol>
     <p>Gem이 만들어 준 JSON을 <code>내용.json</code>으로 저장한 뒤, 파이썬이 있는 PC에서 실행합니다.</p>
     <pre>pip install lxml
@@ -169,6 +172,17 @@ async function copyInst(){try{const r=await fetch(INST);if(!r.ok)throw 0;copy(aw
   catch(e){toast('불러오지 못했습니다. 지침 원문 보기에서 복사하세요');}}
 document.getElementById('copy-inst').addEventListener('click',copyInst);
 document.getElementById('copy-inst2').addEventListener('click',copyInst);
+
+// 다른 주소의 텍스트 파일은 download 속성이 무시되므로, 받아서 직접 저장한다
+document.querySelectorAll('a[data-dl]').forEach(a=>a.addEventListener('click',async e=>{
+  e.preventDefault();
+  try{const r=await fetch(a.href,{cache:'no-store'});if(!r.ok)throw 0;
+    const blob=new Blob([await r.blob()],{type:'application/octet-stream'});
+    const u=URL.createObjectURL(blob);const t=document.createElement('a');
+    t.href=u;t.download=a.dataset.dl;document.body.appendChild(t);t.click();t.remove();
+    setTimeout(()=>URL.revokeObjectURL(u),2000);toast(a.dataset.dl+' 내려받는 중');
+  }catch(err){window.open(a.href,'_blank');toast('새 창에서 열렸습니다. Ctrl+S로 저장하세요');}
+}));
 </script>
 </body>
 </html>
