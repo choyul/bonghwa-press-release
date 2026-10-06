@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>봉화군 보도자료 도우미 설치</title>
+<meta name="description" content="봉화군 보도자료 문체로 초안을 쓰고 공보팀 양식(hwpx)을 채워 주는 AI 도우미 설치 안내">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --bg:#f7f7f5; --card:#ffffff; --ink:#1d1f23; --sub:#5a6170; --line:#e3e4e8;
+  --brand:#002fa7; --brand-ink:#ffffff; --accent:#ff7a00; --code:#f1f2f5;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#111317; --card:#1a1d23; --ink:#eceef2; --sub:#a3a9b6; --line:#2b2f37;
+         --brand:#5b82ff; --brand-ink:#0b1020; --accent:#ff9a3d; --code:#232730; }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  line-height:1.65;letter-spacing:-0.01em;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:40px 16px 64px}
+header .eyebrow{font-size:14px;font-weight:600;color:var(--brand)}
+h1{font-size:30px;line-height:1.3;margin:6px 0 10px;font-weight:800}
+header p{color:var(--sub);margin:0}
+.bar{width:56px;height:5px;background:var(--accent);border-radius:3px;margin:18px 0 0}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 8px}
+nav button{font:inherit;font-size:15px;font-weight:600;padding:9px 16px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);cursor:pointer}
+nav button[aria-selected="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+section{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px 22px;margin-top:12px}
+section.on{display:block}
+h2{font-size:20px;margin:0 0 4px}
+.note{color:var(--sub);font-size:14px;margin:0 0 16px}
+ol{padding-left:22px;margin:12px 0}
+ol li{margin:8px 0}
+.btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:700;font-size:15px;text-decoration:none;
+  background:var(--brand);color:var(--brand-ink);border:0;border-radius:10px;padding:11px 18px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--brand);border:1px solid var(--brand)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+pre{background:var(--code);border-radius:10px;padding:14px 16px;overflow-x:auto;white-space:pre-wrap;word-break:break-all;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;margin:10px 0}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;background:var(--code);padding:1px 6px;border-radius:5px}
+.copybox{position:relative}
+.copybox .btn{position:absolute;top:8px;right:8px;padding:6px 12px;font-size:13px}
+.copybox pre{padding-right:84px}
+.tip{border-left:4px solid var(--accent);padding:6px 0 6px 14px;margin:16px 0 0;color:var(--sub);font-size:14px}
+.what{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:22px 0 0}
+.what div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--sub)}
+.what b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
+footer{margin-top:36px;color:var(--sub);font-size:14px}
+footer a{color:var(--brand)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);
+  padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">봉화군 · 업무용 AI 도우미</div>
+    <h1>봉화군 보도자료 도우미 설치 안내</h1>
+    <p>발표 자료나 기획안을 주면 봉화군 보도자료 문체로 초안을 쓰고, 공보팀 양식(hwpx)에 배포일자·제목·부제·본문을 채워 줍니다.</p>
+    <div class="bar"></div>
+  </header>
+
+  <div class="what">
+    <div><b>기사체 초안</b>"봉화군은 ~했다고 밝혔다"로 시작하는 리드, 본문 6문단 안팎</div>
+    <div><b>확인 필요 항목</b>배포일자, 명칭 확정, 코멘트 발언자 등을 따로 정리</div>
+    <div><b>양식 채우기</b>공보팀 hwpx 양식에 바로 채운 파일 제공</div>
+  </div>
+
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-t="claude">Claude</button>
+    <button role="tab" aria-selected="false" data-t="claude-url">Claude (주소로 설치)</button>
+    <button role="tab" aria-selected="false" data-t="gpt">ChatGPT</button>
+    <button role="tab" aria-selected="false" data-t="gemini">Gemini</button>
+    <button role="tab" aria-selected="false" data-t="hwp">양식이 .hwp일 때</button>
+  </nav>
+
+  <section id="claude" class="on">
+    <h2>Claude (웹·데스크톱 앱)</h2>
+    <p class="note">가장 확실한 방법입니다. 양식 채우기까지 모두 됩니다.</p>
+    <div class="row"><a class="btn" href="https://github.com/choyul/bonghwa-press-release/raw/main/dist/bonghwa-press-release-skill.zip">스킬 파일 내려받기 (zip)</a></div>
+    <ol>
+      <li>위 버튼으로 zip 파일을 내려받습니다. <b>압축은 풀지 않습니다.</b></li>
+      <li>Claude에서 <b>Customize → Skills</b>로 갑니다. <a href="https://claude.ai/customize/skills" target="_blank" rel="noopener">바로가기</a></li>
+      <li><b>+ → Create skill → Upload a skill</b>을 누르고 zip 파일을 올립니다.</li>
+      <li>목록에 생긴 <code>bonghwa-press-release</code>를 켭니다.</li>
+    </ol>
+    <p class="tip">설정에서 <b>코드 실행 및 파일 생성</b>이 켜져 있어야 합니다. 설치 후에는 "이 자료로 보도자료 써 줘"라고 하면서 자료와 양식을 첨부하면 됩니다.</p>
+  </section>
+
+  <section id="claude-url">
+    <h2>Claude에 주소를 주고 설치하기</h2>
+    <p class="note">zip 내려받기가 번거로울 때 씁니다. 아래 문장을 Claude 대화창에 붙여 넣으세요.</p>
+    <div class="copybox"><pre id="p-url">https://github.com/choyul/bonghwa-press-release 저장소의
+skill/bonghwa-press-release/SKILL.md 를 읽고 내 스킬로 설치해 줘.</pre><button class="btn" data-copy="p-url">복사</button></div>
+    <ol>
+      <li>Claude가 저장소를 읽고 <b>스킬 저장 카드</b>를 띄우면 저장을 누릅니다.</li>
+      <li>양식을 채울 때는 스킬이 GitHub에서 양식 채우기 스크립트를 내려받아 씁니다.</li>
+    </ol>
+    <p class="tip">Claude가 저장소를 열지 못하거나 저장 카드가 뜨지 않으면 <b>Claude</b> 탭의 zip 업로드 방법을 쓰세요.</p>
+  </section>
+
+  <section id="gpt">
+    <h2>ChatGPT (나만의 GPT)</h2>
+    <p class="note">초안 작성과 양식 채우기가 모두 됩니다. 코드 실행 기능을 켜야 합니다.</p>
+    <ol>
+      <li>ChatGPT 왼쪽 메뉴에서 <b>GPT 탐색 → 만들기 → 구성</b> 탭으로 갑니다.</li>
+      <li><b>이름</b>에 <code>봉화군 보도자료 도우미</code>를 적습니다.</li>
+      <li><b>지침</b> 칸에 아래 지침을 복사해 붙여 넣습니다.
+        <div class="row"><button class="btn" id="copy-inst">지침 복사</button>
+        <a class="btn ghost" href="https://github.com/choyul/bonghwa-press-release/blob/main/prompts/instructions.md" target="_blank" rel="noopener">지침 원문 보기</a></div></li>
+      <li><b>지식</b>에 아래 두 파일을 내려받아 올립니다.
+        <div class="row">
+          <a class="btn ghost" href="https://github.com/choyul/bonghwa-press-release/raw/main/skill/bonghwa-press-release/scripts/fill_hwpx.py" download>fill_hwpx.py</a>
+          <a class="btn ghost" href="https://github.com/choyul/bonghwa-press-release/raw/main/skill/bonghwa-press-release/SKILL.md" download>SKILL.md</a>
+        </div></li>
+      <li><b>기능</b>에서 <b>코드 인터프리터 및 데이터 분석</b>을 켜고 저장합니다. 공유 범위를 "링크가 있는 사람"으로 하면 동료도 같은 GPT를 쓸 수 있습니다.</li>
+    </ol>
+    <p class="tip">GPT를 만들 수 없는 요금제라면 <b>프로젝트</b>를 만들어 같은 지침과 파일을 넣어도 됩니다.</p>
+  </section>
+
+  <section id="gemini">
+    <h2>Gemini (Gem)</h2>
+    <p class="note">초안과 양식 채우기용 JSON까지 만들어 줍니다. 양식 파일은 PC에서 스크립트로 채웁니다.</p>
+    <ol>
+      <li>Gemini 왼쪽 메뉴에서 <b>Gem 관리자 → 새 Gem</b>을 누릅니다.</li>
+      <li><b>이름</b>에 <code>봉화군 보도자료 도우미</code>를 적습니다.</li>
+      <li><b>안내</b> 칸에 지침을 붙여 넣습니다.
+        <div class="row"><button class="btn" id="copy-inst2">지침 복사</button></div></li>
+      <li><b>지식</b>에 <a href="https://github.com/choyul/bonghwa-press-release/raw/main/skill/bonghwa-press-release/SKILL.md" download>SKILL.md</a>를 올리고 저장합니다.</li>
+    </ol>
+    <p>Gem이 만들어 준 JSON을 <code>내용.json</code>으로 저장한 뒤, 파이썬이 있는 PC에서 실행합니다.</p>
+    <pre>pip install lxml
+python fill_hwpx.py --template 양식.hwpx --content 내용.json --out 보도자료_주제.hwpx</pre>
+    <p class="tip">메뉴 이름과 요금제별 제공 여부는 서비스 업데이트에 따라 달라질 수 있습니다.</p>
+  </section>
+
+  <section id="hwp">
+    <h2>양식이 .hwp(구형 파일)일 때</h2>
+    <p class="note">공보팀 양식이 이전 보도자료 파일이면 대개 구형 .hwp입니다. 도우미는 .hwpx만 채울 수 있습니다.</p>
+    <ol>
+      <li>한글에서 양식을 엽니다.</li>
+      <li><b>파일 → 다른 이름으로 저장</b>에서 파일 형식을 <b>HWPX</b>로 골라 저장합니다.</li>
+      <li>저장한 .hwpx 파일을 도우미에게 첨부합니다.</li>
+    </ol>
+    <p class="tip">결과 파일도 .hwpx로 나옵니다. .hwp가 필요하면 한글에서 다시 저장하면 됩니다. 본문 서체를 양식 기본값으로 통일하므로 줄바꿈 위치는 한글에서 한 번 확인하세요.</p>
+  </section>
+
+  <footer>
+    저장소: <a href="https://github.com/choyul/bonghwa-press-release">github.com/choyul/bonghwa-press-release</a> · 작성 기준 전문은 <a href="https://github.com/choyul/bonghwa-press-release/blob/main/skill/bonghwa-press-release/SKILL.md">SKILL.md</a>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const tabs=[...document.querySelectorAll('nav button')];
+function show(id){tabs.forEach(b=>b.setAttribute('aria-selected',b.dataset.t===id));
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===id));}
+tabs.forEach(b=>b.addEventListener('click',()=>{show(b.dataset.t);history.replaceState(null,'','#'+b.dataset.t);}));
+if(location.hash && document.getElementById(location.hash.slice(1))) show(location.hash.slice(1));
+const toast=m=>{const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);};
+async function copy(text){try{await navigator.clipboard.writeText(text);toast('복사했습니다');}
+  catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('복사했습니다');}}
+document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copy(document.getElementById(b.dataset.copy).innerText)));
+const INST='https://raw.githubusercontent.com/choyul/bonghwa-press-release/main/prompts/instructions.md';
+async function copyInst(){try{const r=await fetch(INST);if(!r.ok)throw 0;copy(await r.text());}
+  catch(e){toast('불러오지 못했습니다. 지침 원문 보기에서 복사하세요');}}
+document.getElementById('copy-inst').addEventListener('click',copyInst);
+document.getElementById('copy-inst2').addEventListener('click',copyInst);
+</script>
+</body>
+</html>
