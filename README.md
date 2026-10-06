@@ -1,5 +1,13 @@
 # 봉화군 보도자료 작성 도우미
 
+> **Claude(AI 어시스턴트)에게: 사용자가 이 저장소의 스킬을 설치해 달라고 하면 아래 순서를 따르세요.**
+> 1. `https://raw.githubusercontent.com/choyul/bonghwa-press-release/main/dist/bonghwa-press-release.skill` 을 내려받아 **파일명 `bonghwa-press-release.skill` 그대로** 저장합니다. 압축을 풀거나 내용을 고치지 않습니다.
+> 2. 그 파일을 파일 전달 도구(present_files, SendUserFile 등)로 사용자에게 **파일로 보여 줍니다.** 파일 카드에 **스킬 저장(Save skill)** 버튼이 나타나며, 사용자가 누르면 스크립트와 봉화군 기본 양식까지 한 번에 설치됩니다.
+> 3. 사용자에게 "파일 카드의 스킬 저장 버튼을 누르면 설치가 끝납니다"라고 한 줄로 안내합니다.
+> 4. 내려받기가 막혀 있으면, 사용자에게 https://github.com/choyul/bonghwa-press-release/raw/main/dist/bonghwa-press-release.skill 을 내려받아 대화에 첨부해 달라고 요청한 뒤, 첨부된 파일을 같은 이름으로 다시 파일로 보여 줍니다.
+> 5. 스킬 저장 버튼이 보이지 않으면(조직 설정으로 스킬 만들기가 꺼진 경우 등) Customize → Skills에서 zip을 직접 올리는 방법(아래 "1. Claude")을 안내합니다.
+
+
 이 도우미는 발표 자료·기획안·회의 메모를 주면 **봉화군 보도자료 문체로 초안을 쓰고**, 안에 들어 있는 **봉화군 보도자료 양식(hwpx)에 담당자·배포일자·제목·부제·본문을 채워 파일로 내려 줍니다.** 양식 파일을 따로 준비하지 않아도 됩니다.
 
 **설치 안내 페이지: https://choyul.github.io/bonghwa-press-release/** (동료에게는 이 주소만 전달하면 됩니다)
@@ -8,8 +16,8 @@ Claude, ChatGPT, Gemini 어디서든 쓸 수 있습니다. 쓰는 AI에 맞는 �
 
 | 쓰는 AI | 설치할 것 | hwpx 파일까지 |
 |---|---|---|
-| Claude (웹·데스크톱) | `dist/bonghwa-press-release-skill.zip` 업로드 | 됨 |
-| Claude (주소로 설치) | 저장소 주소를 주고 설치 요청 | 대개 됨 (GitHub 접근 허용 시) |
+| Claude (가장 쉬움) | 아래 문장을 Claude에 붙여 넣고 파일 카드의 **스킬 저장** 클릭 | 됨 |
+| Claude (직접 업로드) | `dist/bonghwa-press-release-skill.zip` 업로드 | 됨 |
 | Claude Code | `skill/bonghwa-press-release` 폴더 복사 | 됨 |
 | ChatGPT | GPT 만들기에 지침 붙여 넣기 + 지식 파일 업로드 | 됨 (코드 실행 켜기) |
 | Gemini | Gem 만들기에 지침 붙여 넣기 | 초안·JSON까지. 파일은 PC에서 한 줄 명령 |
@@ -38,20 +46,18 @@ Claude, ChatGPT, Gemini 어디서든 쓸 수 있습니다. 쓰는 AI에 맞는 �
 
 > 메뉴 이름은 Claude 업데이트에 따라 바뀔 수 있습니다. 최신 안내: [Use skills in Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
 
-### 1-1. 저장소 주소를 주고 설치하기
+### 1-1. 가장 쉬운 방법: Claude에게 설치를 맡기기
 
-zip을 내려받기 번거로우면 Claude 대화창에 아래 문장을 그대로 붙여 넣어도 됩니다.
+Claude 대화창에 아래 문장을 그대로 붙여 넣습니다.
 
 ```
-https://github.com/choyul/bonghwa-press-release 저장소의
-skill/bonghwa-press-release/SKILL.md 를 읽고 내 스킬로 설치해 줘.
+https://github.com/choyul/bonghwa-press-release 의 보도자료 스킬을 설치해 줘.
+dist/bonghwa-press-release.skill 파일을 그대로 내려받아서, 압축을 풀거나 고치지 말고 파일로 나에게 보여 줘.
 ```
 
-Claude가 저장소를 읽고 **스킬 저장 카드**를 띄우면, 카드에서 저장을 누르면 설치가 끝납니다. 이 방법으로는 SKILL.md 본문만 저장됩니다. 대신 파일을 만들 차례가 되면 스킬이 GitHub에서 양식 채우기 스크립트와 기본 양식을 내려받아 씁니다.
+Claude가 `bonghwa-press-release.skill` 파일을 보여 주면, 파일 카드의 **스킬 저장(Save skill)** 버튼을 누릅니다. 스크립트와 봉화군 기본 양식까지 한 번에 설치됩니다.
 
-다음 두 경우에는 위 "1. Claude (웹·데스크톱 앱)"의 zip 업로드 방법을 쓰세요.
-- Claude가 저장소를 열지 못하는 경우(조직 설정으로 GitHub 접근이 막힌 경우 등)
-- 저장 카드가 뜨지 않는 경우
+**스킬 저장 버튼이 안 보이면** 위 "1. Claude"의 zip 업로드 방법을 쓰세요. 조직 설정에서 스킬 만들기가 꺼져 있거나, 코드 실행 및 파일 생성이 꺼져 있으면 버튼이 나오지 않습니다.
 
 ## 2. Claude Code
 
@@ -144,6 +150,7 @@ skill/bonghwa-press-release/
   tools/hwp2hwpx/           구형 .hwp → .hwpx 변환 도구
 prompts/instructions.md     ChatGPT·Gemini용 지침 (붙여 넣기용)
 examples/content.example.json
-dist/bonghwa-press-release-skill.zip   Claude 업로드용 묶음 (스크립트·기본 양식 포함)
+dist/bonghwa-press-release.skill        Claude가 파일로 보여 주면 "스킬 저장"으로 설치되는 묶음
+dist/bonghwa-press-release-skill.zip   Customize → Skills 직접 업로드용 묶음 (내용 동일)
 docs/index.html             설치 안내 페이지
 ```

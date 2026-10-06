@@ -71,16 +71,29 @@ footer a{color:var(--brand)}
   </div>
 
   <nav role="tablist">
-    <button role="tab" aria-selected="true" data-t="claude">Claude</button>
-    <button role="tab" aria-selected="false" data-t="claude-url">Claude (주소로 설치)</button>
+    <button role="tab" aria-selected="true" data-t="claude">Claude (문장으로 설치)</button>
+    <button role="tab" aria-selected="false" data-t="claude-url">Claude (직접 업로드)</button>
     <button role="tab" aria-selected="false" data-t="gpt">ChatGPT</button>
     <button role="tab" aria-selected="false" data-t="gemini">Gemini</button>
     <button role="tab" aria-selected="false" data-t="hwp">양식 안내</button>
   </nav>
 
   <section id="claude" class="on">
-    <h2>Claude (웹·데스크톱 앱)</h2>
-    <p class="note">가장 확실한 방법입니다. 양식 채우기까지 모두 됩니다.</p>
+    <h2>Claude: 문장 하나로 설치</h2>
+    <p class="note">아래 문장을 Claude 대화창에 붙여 넣으세요. Claude가 스킬 파일을 보여 주면 <b>스킬 저장</b> 버튼만 누르면 됩니다.</p>
+    <div class="copybox"><pre id="p-url">https://github.com/choyul/bonghwa-press-release 의 보도자료 스킬을 설치해 줘.
+dist/bonghwa-press-release.skill 파일을 그대로 내려받아서, 압축을 풀거나 고치지 말고 파일로 나에게 보여 줘.</pre><button class="btn" data-copy="p-url">복사</button></div>
+    <ol>
+      <li>Claude가 <code>bonghwa-press-release.skill</code> 파일 카드를 보여 줍니다.</li>
+      <li>파일 카드의 <b>스킬 저장(Save skill)</b> 버튼을 누릅니다. 스크립트와 봉화군 기본 양식까지 한 번에 설치됩니다.</li>
+      <li>이제 "이 자료로 보도자료 써 줘"라고 하면서 자료만 첨부하면, 봉화군 양식 hwpx 파일까지 만들어 줍니다.</li>
+    </ol>
+    <p class="tip">Claude가 "직접 설치할 수 없다"며 zip 업로드를 안내하거나 <b>스킬 저장</b> 버튼이 보이지 않으면 <b>Claude (직접 업로드)</b> 탭을 따라 하세요. 설정에서 <b>코드 실행 및 파일 생성</b>이 켜져 있어야 합니다.</p>
+  </section>
+
+  <section id="claude-url">
+    <h2>Claude: 직접 업로드</h2>
+    <p class="note">문장으로 설치가 안 될 때 쓰는 방법입니다. 1분이면 끝납니다.</p>
     <div class="row"><a class="btn" href="https://github.com/choyul/bonghwa-press-release/raw/main/dist/bonghwa-press-release-skill.zip">스킬 파일 내려받기 (zip)</a></div>
     <ol>
       <li>위 버튼으로 zip 파일을 내려받습니다. <b>압축은 풀지 않습니다.</b></li>
@@ -88,19 +101,6 @@ footer a{color:var(--brand)}
       <li><b>+ → Create skill → Upload a skill</b>을 누르고 zip 파일을 올립니다.</li>
       <li>목록에 생긴 <code>bonghwa-press-release</code>를 켭니다.</li>
     </ol>
-    <p class="tip">설정에서 <b>코드 실행 및 파일 생성</b>이 켜져 있어야 합니다. 설치 후에는 "이 자료로 보도자료 써 줘"라고 하면서 자료만 첨부하면, 봉화군 양식 hwpx 파일까지 만들어 줍니다.</p>
-  </section>
-
-  <section id="claude-url">
-    <h2>Claude에 주소를 주고 설치하기</h2>
-    <p class="note">zip 내려받기가 번거로울 때 씁니다. 아래 문장을 Claude 대화창에 붙여 넣으세요.</p>
-    <div class="copybox"><pre id="p-url">https://github.com/choyul/bonghwa-press-release 저장소의
-skill/bonghwa-press-release/SKILL.md 를 읽고 내 스킬로 설치해 줘.</pre><button class="btn" data-copy="p-url">복사</button></div>
-    <ol>
-      <li>Claude가 저장소를 읽고 <b>스킬 저장 카드</b>를 띄우면 저장을 누릅니다.</li>
-      <li>양식을 채울 때는 스킬이 GitHub에서 양식 채우기 스크립트를 내려받아 씁니다.</li>
-    </ol>
-    <p class="tip">Claude가 저장소를 열지 못하거나 저장 카드가 뜨지 않으면 <b>Claude</b> 탭의 zip 업로드 방법을 쓰세요.</p>
   </section>
 
   <section id="gpt">
