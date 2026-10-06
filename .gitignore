@@ -1,0 +1,6 @@
+*.hwp
+*.hwpx
+!examples/*.hwpx
+target/
+cp.txt
+__pycache__/
